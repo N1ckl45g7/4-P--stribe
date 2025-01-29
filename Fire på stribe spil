@@ -1,0 +1,52 @@
+import array
+
+def brik_placering(board_state, col):
+    col_list = [row[col] for row in board_state]
+    count = 0
+    for i in col_list:
+        if i == 0:
+            return count
+        count = count + 1
+
+def check_for_win (board_state, player):
+    brikker_på_stribe = 0
+    for row in range(len(board_state)): #Tjekker hver række, om der er 4 på stribe
+        for col in range(len(board_state[0])):
+            if board_state[row][col] == player:
+                brikker_på_stribe = brikker_på_stribe + 1
+            else:
+                brikker_på_stribe = 0
+        if brikker_på_stribe == 4:
+            return True
+
+    for col in range(len(board_state[0])): #Tjekker hver kollone, om der er 4 på stribe
+        for row in range(len(board_state)):
+            if board_state[row][col] == player:
+                brikker_på_stribe = brikker_på_stribe + 1
+            else:
+                brikker_på_stribe = 0
+        if brikker_på_stribe == 4:
+            return True
+
+
+
+def game_loop():
+    board_state = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+    player = 1
+    while True:
+        user_inp = int(input("Hvilken kolonne lægger du en brik i? ")) - 1
+        board_state[brik_placering(board_state, user_inp)][user_inp] = player
+
+        for row in reversed(range(len(board_state))):
+            print(board_state[row])
+
+        if check_for_win(board_state, player) == True:
+            print(f"Spiller {player} har vundet!")
+            break
+
+        if player == 1:
+            player = 2
+        else:
+            player = 1
+
+game_loop()
