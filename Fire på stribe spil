@@ -1,5 +1,3 @@
-import array
-
 def brik_placering(board_state, col): #Tjekker hvilken position brikken skal placeres i
     col_list = [row[col] for row in board_state] #Laver den valgte kollone til en liste
     count = 0 #Tæller
@@ -8,34 +6,27 @@ def brik_placering(board_state, col): #Tjekker hvilken position brikken skal pla
             return count
         count = count + 1
 
-def check_for_win (board_state, player_id): #Tjekker om den aktuelle spiller har vundet
+def check_for_win (board_state, player): #Tjekker om den aktuelle spiller har vundet
     brikker_på_stribe = 0
-    for row in range(len(board_state)): #Vandret win-condition
+    for row in range(len(board_state)): #Tjekker hver række, om der er 4 på stribe
         for col in range(len(board_state[0])):
-            if board_state[row][col] == player_id:
+            if board_state[row][col] == player:
                 brikker_på_stribe = brikker_på_stribe + 1
             elif brikker_på_stribe == 4:
                 return True
             else:
                 brikker_på_stribe = 0
 
-    for col in range(len(board_state[0])): #Lodret win-condition
+    for col in range(len(board_state[0])): #Tjekker hver kollone, om der er 4 på stribe
         for row in range(len(board_state)):
-            if board_state[row][col] == player_id:
+            if board_state[row][col] == player:
                 brikker_på_stribe = brikker_på_stribe + 1
             elif brikker_på_stribe == 4:
                 return True
             else:
                 brikker_på_stribe = 0
 
-    for row in range(len(board_state)): #Skrå win-condition
-        for col in range(len(board_state[0])):
-            if board_state[row][col] == player_id and board_state[row + 1][col + 1] == player_id and board_state[row + 2][col + 2] == player_id and board_state[row + 3][col + 3] == player_id:
-                return True
-            elif board_state[row][col] == player_id and board_state[row - 1][col + 1] == player_id and board_state[row - 2][col + 2] == player_id and board_state[row - 3][col + 3] == player_id:
-                return True
-            else:
-                continue
+
 
 def game_loop():
     board_state = [[0,0,0,0,0,0,0],
@@ -44,23 +35,32 @@ def game_loop():
                    [0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0]]
-    player_id = 1
+    player = 1
     for row in reversed(range(len(board_state))):
         print(board_state[row])
     while True:
-        user_inp = int(input(f"Spiller {player_id}:")) - 1
-        board_state[brik_placering(board_state, user_inp)][user_inp] = player_id
+        user_inp = int(input("Hvilken kolonne lægger du en brik i? ")) - 1
+        if not user_inp in range(len(board_state)):
+            print("Du kan ikke placere der prøv venligst igen.")
+            continue
+
+        if not brik_placering(board_state, user_inp) in range(len(board_state[0])):
+            print("Kollone er fyldt, prøv igen!")
+            continue
+        
+        board_state[brik_placering(board_state, user_inp)][user_inp] = player
+
 
         for row in reversed(range(len(board_state))):
             print(board_state[row])
 
-        if check_for_win(board_state, player_id) == True:
-            print(f"Spiller {player_id} har vundet!")
+        if check_for_win(board_state, player) == True:
+            print(f"Spiller {player} har vundet!")
             break
 
-        if player_id == 1:
-            player_id = 2
+        if player == 1:
+            player = 2
         else:
-            player_id = 1
+            player = 1
 
 game_loop()
