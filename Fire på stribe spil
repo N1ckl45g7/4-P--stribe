@@ -48,33 +48,41 @@ def game_loop(): #Main Gameloop
                    [0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0]]
-    player_id = 1
-    for row in reversed(range(len(board_state))):
+    player_id = 1 #Spillerens tur
+    for row in reversed(range(len(board_state))): #Printer det tomme board til at starte med
         print(board_state[row])
     print(f"Vælg hvilken kollone du vil spille i (1-{len(board_state[0])})") #Startbesked
-    while True:
-        user_inp = int(input(f"Spiller {player_id}: ")) - 1
-
-        if not user_inp in range(len(board_state[0])):
-            print("Du kan ikke placere der prøv venligst igen.")
+    while True: #Loop for hver tur
+        try:
+            user_inp = int(input(f"Spiller {player_id}: ")) - 1
+        except ValueError: #Fejlbesked, hvis userinputtet ikke er en integer
+            print("Fejl! Indtast et gyldigt input (1-6).")
             continue
 
-        if not brik_placering(board_state, user_inp) in range(len(board_state)):
-            print("Kollone er fyldt, prøv igen!")
+        if not user_inp in range(len(board_state[0])): #Fejlbesked, hvis userinputtet ikke er inden for brættet
+            print("Fejl! Vælg en kollone inden for spillebrættet.")
             continue
 
-        board_state[brik_placering(board_state, user_inp)][user_inp] = player_id
+        if not brik_placering(board_state, user_inp) in range(len(board_state)): #Fejlbesked, hvis den valgte kollone er fyldt
+            print("Fejl! Kollone er fyldt, prøv igen!")
+            continue
 
-        for row in reversed(range(len(board_state))):
+        board_state[brik_placering(board_state, user_inp)][user_inp] = player_id #Placerer brikken i spillerens valgte kollone
+
+        for row in reversed(range(len(board_state))): #Printer boardstate, med den første række nederst
             print(board_state[row])
 
-        if check_for_win(board_state, player_id) == True:
+        if check_for_win(board_state, player_id) == True: #Tjekker om spilleren har vundet
             print(f"Spiller {player_id} har vundet!")
-            break
+            break #Når spilleren har vundet, så stop loop'et
 
-        if player_id == 1:
+        if all(cell != 0 for cell in board_state[len(board_state) - 1]): #Uafgjort, hvis hele brættet er fyldt
+            print("Uafgjort!")
+            break #Når spillet ender uafgjort, så stop loop'et
+
+        if player_id == 1: #Skifter turen mellem spillerne
             player_id = 2
         else:
             player_id = 1
 
-game_loop()
+game_loop() #Starter spillet
