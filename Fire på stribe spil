@@ -1,10 +1,11 @@
+#Fire på stribe spil kode
 
 def brik_placering(board_state, col): #Tjekker hvilken position brikken skal placeres i
     col_list = [row[col] for row in board_state] #Laver den valgte kollone til en liste
     count = 0 #Tæller
-    for i in col_list: #Loop'er igennem hver 'slot' i kollonen
-        if i == 0: #Hvis pladsen er tom, så retuner værdien
-            return count
+    for i in col_list: #Loop'er igennem hver 'felt' i den valgte kollone
+        if i == 0: #Tjekker hvornår pladsen er tom
+            return count #Returnerer den første tomme plads' position
         count = count + 1
 
 def check_for_win (board_state, player_id): #Tjekker om den aktuelle spiller har vundet
@@ -12,11 +13,11 @@ def check_for_win (board_state, player_id): #Tjekker om den aktuelle spiller har
     for row in range(len(board_state)): #Vandret win-condition
         for col in range(len(board_state[0])):
             if board_state[row][col] == player_id:
-                brikker_på_stribe = brikker_på_stribe + 1
+                brikker_på_stribe = brikker_på_stribe + 1 #Tæller hvor mange brikker er på stribe
             elif brikker_på_stribe >= 4:
-                return True
+                return True #Returnerer True, hvis der er fire på stribe
             else:
-                brikker_på_stribe = 0 #Hvis der ikke er 4 på stribe i streg, så fortsæt tælleren fra nul
+                brikker_på_stribe = 0 #Hvis der er en tom plads, så sæt tælleren til nul og fortsæt
 
     for col in range(len(board_state[0])): #Lodret win-condition
         for row in range(len(board_state)):
@@ -29,17 +30,18 @@ def check_for_win (board_state, player_id): #Tjekker om den aktuelle spiller har
 
     for row in range(len(board_state)): #Skrå win-condition
         for col in range(len(board_state[0])):
-            try:
-                if board_state[row][col] == player_id and board_state[row + 1][col + 1] == player_id and board_state[row + 2][col + 2] == player_id and board_state[row + 3][col + 3] == player_id:
-                    return True
-                elif board_state[row][col] == player_id and board_state[row - 1][col + 1] == player_id and board_state[row - 2][col + 2] == player_id and board_state[row - 3][col + 3] == player_id:
-                    return True
-                else:
-                    continue
-            except:
-                continue
+            if board_state[row][col] == player_id: #Hvis feltet er spillerens
+                #Skråt op til højre
+                if row + 3 < len(board_state) and col + 3 < len(board_state[0]): #Tjekker om 4 på stribe er muligt i feltet
+                    if board_state[row][col] == player_id and board_state[row + 1][col + 1] == player_id and board_state[row + 2][col + 2] == player_id and board_state[row + 3][col + 3] == player_id:
+                        return True 
 
-def game_loop():
+                #Skråt op til venstre
+                if row - 3 >= 0 and col + 3 < len(board_state[0]):
+                    if board_state[row][col] == player_id and board_state[row - 1][col + 1] == player_id and board_state[row - 2][col + 2] == player_id and board_state[row - 3][col + 3] == player_id:
+                        return True 
+
+def game_loop(): #Main Gameloop
     board_state = [[0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],
                    [0,0,0,0,0,0,0],
@@ -49,7 +51,7 @@ def game_loop():
     player_id = 1
     for row in reversed(range(len(board_state))):
         print(board_state[row])
-    print(f"Vælg hvilken kollone du vil spille i (1-{len(board_state[0])})")
+    print(f"Vælg hvilken kollone du vil spille i (1-{len(board_state[0])})") #Startbesked
     while True:
         user_inp = int(input(f"Spiller {player_id}: ")) - 1
 
